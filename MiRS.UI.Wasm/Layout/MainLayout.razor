@@ -1,54 +1,44 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-@*     <div class="sidebar">
-        <NavMenu />
-    </div> *@
-
+<div class="page no-select">
     <main >
-
         <div class="topnav">
             <div class="logo">
                 <a href="#">MyApp</a>
             </div>
 
-            <!-- Centered Search Bar with Magnifying Glass Button -->
             <div class="search-bar-container">
                 <div class="search-bar-wrapper">
                     <input type="text" class="search-bar" placeholder="Search..." />
                     <button class="search-btn">
-                        <i class="fa fa-search"></i> <!-- FontAwesome magnifying glass -->
+                        <i class="fa fa-search"></i> 
                     </button>
                 </div>
             </div>
 
-            <!-- Navigation Links -->
             <div class="nav-links">
                 <a href="/">Home</a>
-                <a href="/about">About</a>
-                <a href="/services">Services</a>
+                <a href="/event">About</a>
+                <a href="/eventold">Services</a>
                 <a href="/contact">Contact</a>
             </div>
 
-            <!-- Dropdown Menu (for smaller screens) -->
             <div class="dropdown">
                 <button class="dropdown-btn">
-                    <i class="fa fa-bars"></i> <!-- Hamburger Icon -->
+                    <i class="fa fa-bars"></i>
                 </button>
                 <div class="dropdown-content">
                     <a href="/">Home</a>
-                    <a href="/about">About</a>
-                    <a href="/services">Services</a>
+                    <a href="/event">About</a>
+                    <a href="/eventold">Services</a>
                     <a href="/contact">Contact</a>
                 </div>
             </div>
         </div>
 
-
-
-
         <article class="content px-4">
             @Body
         </article>
+
     </main>
 </div>

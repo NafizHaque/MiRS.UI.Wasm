@@ -1,0 +1,93 @@
+﻿.texture-effect-cross {
+    background-image: repeating-linear-gradient( 45deg, rgba(255,255,255,0.03), rgba(255,255,255,0.03) 1px, transparent 1px, transparent 4px ), repeating-linear-gradient( -45deg, rgba(0,0,0,0.05), rgba(0,0,0,0.05) 1px, transparent 1px, transparent 5px );
+    background-size: 40px 40px;
+}
+
+.texture-effect-grain {
+    background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px), radial-gradient(circle, rgba(0,0,0,0.04) 1px, transparent 1px);
+    background-size: 10px 10px;
+}
+
+.loot-container {
+    width: 30rem;
+    height: 30rem;
+    max-height: 30rem;
+    max-width: 90%;
+    box-sizing: border-box;
+    background: linear-gradient( 90deg, rgba(0, 0, 0, 0.75) 50%, rgba(56, 45, 29, 0.75) 90% );
+    border-radius: 15px 15px 15px 15px;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+}
+
+.loot-item-container {
+    display: flex;
+    height: 80%; /* let it grow with content */
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+    overflow-y: auto;
+    font-size: 1rem;
+    border: 1px solid white;
+    background-color: #3d3223;
+}
+
+.team-container {
+    width: 85%;
+    max-width: 100%;
+    box-sizing: border-box;
+    border: solid;
+    border-radius: 15px 15px 15px 15px;
+    border-color: #866d35;
+    border-width: 6px;
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+    background-color: #3d3223;
+}
+
+.team-item {
+    display: inline-flex;
+    flex: 0 1 auto;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid yellow;
+    border-radius: 5px;
+    color: yellow;
+    background-color: rgba(255, 255, 0, 0.1);
+    font-size: 15px;
+    text-align: center;
+    box-sizing: border-box;
+    white-space: nowrap; /* keeps text in one line */
+}
+
+.title-team {
+    background-color: rgba(228, 206, 155, 0.20);
+    padding: 12px 0;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 4px;
+    box-sizing: border-box;
+    display: flex;
+    flex-wrap: wrap; /* allows content to wrap */
+    align-items: center;
+    justify-content: center;
+    position: relative; /* ensures buttons are positioned inside */
+    color: #c6aa76;
+}
+
+.team-item-container {
+    display: flex;
+    height: 80%; /* let it grow with content */
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: flex-start;
+    overflow-y: auto;
+    font-size: 1rem;
+    gap: 0.5rem;
+    background-color: #3d3223;
+}
+
+
+.light-brown-box {
+    width: 85%;
+    height: 200px; /* adjust size as needed */
+    background-color: rgba(181, 101, 29, 0.2); /* light brown with low opacity */
+    border: 2px dashed rgba(0, 0, 0, 0.3); /* dashed border with low opacity */
+    border-radius: 5px; /* optional: rounded corners */
+}
