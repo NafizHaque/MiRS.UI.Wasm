@@ -1,0 +1,116 @@
+﻿@inject EventService EventDashboardService
+@page "/event/{EventId:int}/{GuildId:long}"
+
+
+<h1 class="mb-5 mt-5 text-center">Hello, world!</h1>
+
+<div class="container my-5">
+    <div class="loot-container mx-auto">
+        <!-- Team title on top -->
+        <div class="">
+            <h2 class="runescape-font mx-auto fs-5 p-3 text-center" style="color:yellow;">
+                Latest Loot Dropped
+            </h2>
+        </div>
+
+        <div class="loot-item-container texture-effect-grain mx-4 mb-4 p-4">
+            <p class="runescape-font w-100" style="color:yellow;">
+                [12:15] fizzdawgs just recieved (5) Bones from Goblin and the Chambers Of Xeric
+            </p>
+            <p class="runescape-font" style="color:yellow;">
+                [12:15] fizzdawgs just recieved (5) Bones from Goblin and the Chambers Of Xeric
+            </p>
+        </div>
+    </div>
+
+    <input @bind="ViewModel.TeamAdminUnlock" placeholder="Type Password here..." />
+    <button @onclick="ApplyText">Apply</button>
+
+    <div class="content @(ViewModel.IsEnabled ? "" : "editteam-disabled-div")">
+        <h1 class="mb-5 mt-5 text-cemter">Teams</h1>
+
+        <div class="mt-5 mx-auto mb-5">
+            @foreach (var team in ViewModel.Teams)
+            {
+                <div class="team-container p-2 texture-effect-cross mx-auto">
+                    <div class="title-team d-flex flex-wrap align-items-center justify-content-between p-3 m-1 mb-3 ">
+
+                        <h2 class="runescape-font text-center flex-grow-1 m-0">
+                            @team.TeamName
+                        </h2>
+                        <div class="d-flex gap-2 flex-shrink-0 mt-2 mt-sm-0">
+                            <button type="button" class="btn btn-success btn-sm">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm">
+                                <i class="fa-solid fa-trash" @onclick="() => RemoveTeamFromEvent(team.Id)"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <Dropzone TItem="UserToTeam" Items="team.UsersInTeam" Class="team-item-container" ItemWrapperClass="@(item => "team-item")">
+                        @context.User.Runescapename
+                    </Dropzone>
+                </div>
+            }
+        </div>
+
+        <div class="light-brown-box p-2 texture-effect-cross mx-auto d-flex align-items-center justify-content-center mb-3 flex-wrap">
+            <button type="button" class="btn btn-success btn-sm" @onclick="() => ViewModel.ShowModal = true">
+                <i class="fa-solid fa-plus"></i>
+                <p>Add New Team</p>
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<AddTeamModal @bind-IsVisible="ViewModel.ShowModal" Teams="ViewModel.Teams" OnSave="SaveTeams">
+  
+</AddTeamModal>
+
+@code {
+    [Parameter] public int EventId { get; set; }
+    [Parameter] public long GuildId { get; set; }
+
+    private EventDashboardViewModel ViewModel = new EventDashboardViewModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTeams();
+    }
+
+    private async Task LoadTeams()
+    {
+        ViewModel.Teams = await EventDashboardService.GetTeamsFromEvent(EventId);
+        await EventDashboardService.GetEventById(EventId);
+    }
+
+    private async Task SaveTeams(AddTeamRequest addTeamRequest)
+    {
+        addTeamRequest.NewTeamToBeCreated.GuildId = (ulong)GuildId;
+
+        addTeamRequest.EventId = EventId;
+
+        await EventDashboardService.UpdateTeamsForEvent(addTeamRequest);
+
+        await LoadTeams();
+    }
+
+    private async Task RemoveTeamFromEvent(int teamid)
+    {
+        await EventDashboardService.RemoveTeamFromEvent(teamid, EventId);
+
+        await LoadTeams();
+    }
+
+    private void ApplyText()
+    {
+        ViewModel.IsEnabled = !string.IsNullOrWhiteSpace(ViewModel.TeamAdminUnlock);
+    }
+
+    private string EditTeamToggle()
+    {
+        return string.IsNullOrWhiteSpace(ViewModel.TeamAdminUnlock) ? "editteam-disabled-div" : "editteam-enabled-div";
+    }
+}
+

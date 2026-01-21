@@ -1,0 +1,174 @@
+﻿@inject UsersService AddTeamService
+
+@if (IsVisible)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);" @onmousedown="CloseModal">
+        <div class="modal-dialog modal-dialog-centered d-flex justify-content-center  modal-lg" @onmousedown:stopPropagation="true">
+            <div class="modal-content texture-effect-grain" style="min-height:40vh;">
+                <div class="modal-header" style="border-color:#c6aa76;">
+                    <h2 class="fs-3 event-card-title mx-auto mb-2 runescape-font ps-4">
+                        Team Admin
+                    </h2>
+                    <button type="button" class="btn-close" aria-label="Close" @onmousedown="CloseModal"></button>
+                </div>
+                <div class="modal-body">
+                    <label for="teamName" class="text-white mb-2" style="font-weight: bold; display: block;">
+                        Team Name
+                    </label>
+
+                    <input type="text" class="modal-textbox" @bind="TeamToBeEditted.TeamName" @bind:event="oninput" placeholder="Type team name here...." />
+
+                    <div class="d-flex gap-3 w-100 mt-3">
+                        <div class="team-column">
+                            <select class="modal-select mb-2" @bind="selectedEditModeTeamId">
+                                <option value="@Unassigned.Id">@Unassigned.TeamName</option>
+                                @foreach (var team in Teams)
+                                {
+                                    <option value="@team.Id">@team.TeamName</option>
+                                }
+                            </select>
+                            @if (selectedEditModeTeamId == 0)
+                            {
+                                <div class="border p-3 pt-1" style="height:12rem">
+
+                                    <input type="text" class="modal-textbox mb-1" @oninput="UserSearch" placeholder="Search user here...." style="height:2rem;" />
+
+                                    <Dropzone TItem="MiRS.UI.Wasm.Domain.Entities.UserToTeam" OnItemDrop="OnPlayerDropped" Items="@(CurrentPlayers())" Class="team-item-container-small" ItemWrapperClass="@(item => "team-item-small")">
+                                        @context.User.Runescapename
+                                    </Dropzone>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="border p-3" style="height:12rem">
+                                    <Dropzone TItem="MiRS.UI.Wasm.Domain.Entities.UserToTeam" OnItemDrop="OnPlayerDropped" Items="@(CurrentPlayers())" Class="team-item-container-small" ItemWrapperClass="@(item => "team-item-small")">
+                                        @context.User.Runescapename
+                                    </Dropzone>
+                                </div>
+                            }
+                        </div>
+                        <div class="team-column">
+                            <div class="modal-select mb-2">
+
+                                <div>@TeamToBeEditted.TeamName</div>
+                            </div>
+                            <div class="border p-3" style="height:12rem">
+                                @if (selectedEditModeTeamId == 0)
+                                {
+
+                                    <Dropzone CopyItem="CopyPlayer" OnItemDrop="OnPlayerDropped" TItem="MiRS.UI.Wasm.Domain.Entities.UserToTeam" Items="TeamToBeEditted.UsersInTeam" Class="team-item-container-small" ItemWrapperClass="@(item => "team-item-small")">
+                                        @context.User.Runescapename
+                                    </Dropzone>
+                                }
+                                else
+                                {
+                                    <Dropzone TItem="MiRS.UI.Wasm.Domain.Entities.UserToTeam" OnItemDrop="OnPlayerDropped" Items="TeamToBeEditted.UsersInTeam" Class="team-item-container-small" ItemWrapperClass="@(item => "team-item-small")">
+                                        @context.User.Runescapename
+                                    </Dropzone>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer m-0 p-0" style="border: none;">
+                    <button class="btn btn-primary me-2" @onmousedown="SaveTeamChanges">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@code {
+    [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
+    [Parameter] public IList<GuildTeam> Teams { get; set; } = new List<GuildTeam>();
+    [Parameter] public GuildTeam TeamToBeEditted { get; set; } = new GuildTeam();
+    [Parameter] public EventCallback<TeamAdminViewModel> OnSave { get; set; }
+
+    private GuildTeam Unassigned { get; set; } = new GuildTeam { Id = 0, TeamName = "Unassigned" };
+
+    private TeamAdminViewModel teamAdminViewModal = new TeamAdminViewModel();
+    private int selectedEditModeTeamId;
+
+    private CancellationTokenSource? userSearchCancelToken;
+
+    private async Task CloseModal()
+    {
+        await Task.Delay(200, new CancellationTokenSource().Token);
+        IsVisible = false;
+        await IsVisibleChanged.InvokeAsync(false);
+    }
+
+    private IList<UserToTeam> CurrentPlayers()
+    {
+        if (selectedEditModeTeamId == 0)
+        {
+            return Unassigned.UsersInTeam.ToList() ?? new List<UserToTeam>();
+        }
+
+        return Teams?.FirstOrDefault(t => t.Id == selectedEditModeTeamId)?.UsersInTeam ?? new List<UserToTeam>();
+    }
+
+    private async Task SaveTeamChanges()
+    {
+        teamAdminViewModal.NewTeamToBeCreated = TeamToBeEditted;
+        teamAdminViewModal.CurrentTeamsToBeUpdated = Teams;
+
+        await OnSave.InvokeAsync(teamAdminViewModal);
+
+        await CloseModal();
+    }
+
+    private async Task UserSearch(ChangeEventArgs e)
+    {
+        string userSearchKey = e.Value?.ToString() ?? string.Empty;
+
+        if (string.IsNullOrWhiteSpace(userSearchKey))
+        {
+            Unassigned.UsersInTeam.Clear();
+            return;
+        }
+
+        userSearchCancelToken?.Cancel();
+        userSearchCancelToken = new CancellationTokenSource();
+
+        try
+        {
+
+            await Task.Delay(350, userSearchCancelToken.Token);
+            Unassigned.UsersInTeam = await AddTeamService.UserSearch(userSearchKey, userSearchCancelToken.Token);
+        }
+        catch (TaskCanceledException)
+        {
+            Unassigned.UsersInTeam.Clear();
+            return;
+        }
+    }
+
+    private UserToTeam CopyPlayer(UserToTeam item)
+    {
+        return new UserToTeam
+        {
+            Id = item.Id,
+            UserId = item.UserId,
+            TeamId = item.TeamId,
+            User = item.User
+        };
+    }
+
+    private void OnPlayerDropped(UserToTeam player)
+    {
+        var duplicates = TeamToBeEditted.UsersInTeam
+            .Where(p => p.User.Runescapename == player.User.Runescapename)
+            .ToList();
+
+        if (duplicates.Count > 1)
+        {
+            for (int i = 0; i < duplicates.Count - 1; i++)
+            {
+                TeamToBeEditted.UsersInTeam.Remove(duplicates[i]);
+            }
+        }
+    }
+}

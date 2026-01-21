@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -7,8 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="blazor-dragdrop" Version="2.6.1" />
+    <PackageReference Include="Flurl" Version="4.0.0" />
+    <PackageReference Include="Flurl.Http" Version="4.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.13" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.13" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MiRs.UI.Wasm.Domain\MiRS.UI.Wasm.Domain.csproj" />
+    <ProjectReference Include="..\MiRS.UI.Wasm.Gateway\MiRS.UI.Wasm.Gateway.csproj" />
+    <ProjectReference Include="..\MiRS.UI.Wasm.Infra\MiRS.UI.Wasm.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

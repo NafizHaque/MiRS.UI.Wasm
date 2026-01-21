@@ -1,0 +1,134 @@
+﻿@page "/eventold"
+@using MiRS.UI.Wasm.Components
+
+<div class="rs-container my-3">
+
+
+    <div class="d-flex justify-content-end">
+        <div class="flex-container-no-border d-flex flex-column p-2" style="width: 70vw;">
+            <!-- Team title on top -->
+@*             <div class="">
+                <h2 class="runescape-font-title-bold mx-auto text-start p-3 pt-4" style="color:yellow;">
+                    Latest Loot Dropped
+                </h2>
+            </div>
+ *@
+            <!-- Tab buttons -->
+            <div class="tab-wrapper m-3">
+                <div class="tab-tabs runescape-font mx-3" style="font-size:28px;">
+                    <button class="event-tab texture-effect-grain me-2 @(ActiveTab == 1 ? "active" : "")" @onclick="() => SetTab(1)">Unassigned</button>
+                    <button class="event-tab texture-effect-grain me-2 @(ActiveTab == 2 ? "active" : "")" @onclick="() => SetTab(2)">Teams</button>
+                    <button class="event-tab texture-effect-grain @(ActiveTab == 3 ? "active" : "")" @onclick="() => SetTab(3)">Metrics</button>
+                </div>
+
+                <div class="event-box texture-effect-grain mx-4 mb-4 p-4">
+                    @if (ActiveTab == 1)
+                    {
+                        <div class="player-assignment-wrapper">
+                            <Dropzone TItem="Player" Items="@Unassigned.Players" Class="flex-item-container-big" ItemWrapperClass="@(item => "flex-item")">
+                                @context.Name
+                            </Dropzone>
+                            <div class="teams-small">
+                                @foreach (var team in Teams)
+                                {
+                                    <div class=" p-2">
+                                        <!-- Team title on top -->
+                                        <div class="">
+                                            <h2 class="runescape-font text-center" style="color:yellow;">
+                                                @team.Name
+                                            </h2>
+                                        </div>
+
+
+                                        <!-- Players as flex items -->
+                                        <Dropzone TItem="Player" Ites="team.Players" Class="teams-small-box texture-effect-cross">
+                                        </Dropzone>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                       
+                    }
+                    else if (ActiveTab == 2)
+                    {
+                        <EventTeams></EventTeams>
+                    }
+                    else if (ActiveTab == 3)
+                    {
+                        <p class="runescape-font" style="color:yellow;">Coming soon....</p>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="flex-container-no-border d-flex justify-content-end  p-2 ms-3">
+            <!-- Team title on top -->
+            <div class="">
+                <h2 class="runescape-font-title-bold mx-auto text-start p-3 pt-4" style="color:yellow;">
+                    Latest Loot Dropped
+                </h2>
+            </div>
+
+            <div class="flex-item-container texture-effect-grain mx-4 mb-4 p-4" style="border: 1px solid white; background-color: #3d3223; height:500px;">
+                <p class="runescape-font w-100" style="color:yellow;">
+                    [12:15] fizzdawgs just recieved (5) Bones from Goblin and the Chambers Of Xeric
+                </p>
+                <p class="runescape-font" style="color:yellow;">
+                    [12:15] fizzdawgs just recieved (5) Bones from Goblin and the Chambers Of Xeric
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="d-flex flex-wrap gap-3 mt-5 align-items-center">
+        @foreach (var team in Teams)
+        {
+            <div class="flex-container p-2 texture-effect-cross">
+                <!-- Team title on top -->
+                <div class="title-box">
+                    <h2 class="runescape-font-title-bold mx-auto text-center" style="color:yellow;">
+                        @team.Name
+                    </h2>
+                </div>
+
+
+                <!-- Players as flex items -->
+                <Dropzone TItem="Player" Items="team.Players" Class="flex-item-container" ItemWrapperClass="@(item => "flex-item")">
+                        @context.Name
+                </Dropzone>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    public class Team
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = "";
+        public List<Player> Players { get; set; } = new();
+    }
+
+    public class Player
+    {
+        public string Name { get; set; } = "";
+    }
+
+    private int ActiveTab { get; set; } = 1;
+
+    Team Unassigned = new Team { Name = "Unassigned", Players = new List<Player> { new Player { Name = "Whitebeard" }, new Player { Name = "Blackbeard" } } };
+
+    List<Team> Teams = new()
+    {
+        new Team { Name = "Team A", Players = new List<Player>{ new Player{ Name = "Nami" }, new Player{ Name = "Zoro" }}},
+        new Team { Name = "Team B", Players = new List<Player>{ new Player{ Name = "Bonnie" }}},
+        new Team { Name = "Team C", Players = new List<Player>{ new Player{ Name = "Law" }, new Player{ Name = "Luffy" }}},
+        new Team { Name = "Team D", Players = new List<Player>{ new Player{ Name = "Coby" }}},
+    };
+
+    private void SetTab(int tabNumber)
+    {
+        ActiveTab = tabNumber;
+    }
+
+};

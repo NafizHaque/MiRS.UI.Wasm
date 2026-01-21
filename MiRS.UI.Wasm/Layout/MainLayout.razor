@@ -1,16 +1,44 @@
 ﻿@inherits LayoutComponentBase
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+<div class="page no-select">
+    <main >
+        <div class="topnav">
+            <div class="logo">
+                <a href="#">MyApp</a>
+            </div>
+
+            <div class="search-bar-container">
+                <div class="search-bar-wrapper">
+                    <input type="text" class="search-bar" placeholder="Search..." />
+                    <button class="search-btn">
+                        <i class="fa fa-search"></i> 
+                    </button>
+                </div>
+            </div>
+
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/event">About</a>
+                <a href="/eventold">Services</a>
+                <a href="/contact">Contact</a>
+            </div>
+
+            <div class="dropdown">
+                <button class="dropdown-btn">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <div class="dropdown-content">
+                    <a href="/">Home</a>
+                    <a href="/event">About</a>
+                    <a href="/eventold">Services</a>
+                    <a href="/contact">Contact</a>
+                </div>
+            </div>
         </div>
 
         <article class="content px-4">
             @Body
         </article>
+
     </main>
 </div>

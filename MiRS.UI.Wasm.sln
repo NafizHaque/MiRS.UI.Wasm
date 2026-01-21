@@ -1,9 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35825.156 d17.13
+VisualStudioVersion = 17.13.35825.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiRS.UI.Wasm", "MiRS.UI.Wasm\MiRS.UI.Wasm.csproj", "{2D55F037-5464-499C-B9D4-0D812193CB2B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiRS.UI.Wasm.Infrastructure", "MiRS.UI.Wasm.Infra\MiRS.UI.Wasm.Infrastructure.csproj", "{EEB7F665-DEDF-476D-815C-0EEDA6C9241F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiRS.UI.Wasm.Domain", "MiRs.UI.Wasm.Domain\MiRS.UI.Wasm.Domain.csproj", "{9D817DCF-A789-4AD0-A557-0917BAE7A472}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiRS.UI.Wasm.Gateway", "MiRS.UI.Wasm.Gateway\MiRS.UI.Wasm.Gateway.csproj", "{DA4C8E71-448F-4D5E-AADF-2EAD2B1F0BD4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infastructure", "Infastructure", "{2E43DCA9-B4BA-4156-AAE1-570E9FC4B652}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{B05D5EB6-04B9-4C9B-A25D-DFCC9C2AB121}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{525D5541-BD3F-4CE8-B838-3309148EAC78}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +29,27 @@ Global
 		{2D55F037-5464-499C-B9D4-0D812193CB2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D55F037-5464-499C-B9D4-0D812193CB2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D55F037-5464-499C-B9D4-0D812193CB2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEB7F665-DEDF-476D-815C-0EEDA6C9241F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEB7F665-DEDF-476D-815C-0EEDA6C9241F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEB7F665-DEDF-476D-815C-0EEDA6C9241F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEB7F665-DEDF-476D-815C-0EEDA6C9241F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D817DCF-A789-4AD0-A557-0917BAE7A472}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D817DCF-A789-4AD0-A557-0917BAE7A472}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D817DCF-A789-4AD0-A557-0917BAE7A472}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D817DCF-A789-4AD0-A557-0917BAE7A472}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA4C8E71-448F-4D5E-AADF-2EAD2B1F0BD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA4C8E71-448F-4D5E-AADF-2EAD2B1F0BD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA4C8E71-448F-4D5E-AADF-2EAD2B1F0BD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA4C8E71-448F-4D5E-AADF-2EAD2B1F0BD4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2D55F037-5464-499C-B9D4-0D812193CB2B} = {B05D5EB6-04B9-4C9B-A25D-DFCC9C2AB121}
+		{EEB7F665-DEDF-476D-815C-0EEDA6C9241F} = {2E43DCA9-B4BA-4156-AAE1-570E9FC4B652}
+		{9D817DCF-A789-4AD0-A557-0917BAE7A472} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{DA4C8E71-448F-4D5E-AADF-2EAD2B1F0BD4} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9E24DC17-86D0-4344-9469-AF9E1484CA93}

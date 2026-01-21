@@ -1,7 +1,61 @@
-﻿@page "/"
+﻿@inject EventService EventHomeService
+@page "/"
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1 class="mb-5 mt-5 text-center">Hello, world!</h1>
 
-Welcome to your new app.
+<div class="container my-5"> 
+    <div class="row justify-content-center">
+        <div class="col-12">    
+            @foreach (var eventCard in eventHomeViewModel.Events)
+            {
+                <div class="event-card texture-effect-cross card mb-3" @onclick= "() => NavigateToEvent(eventCard.Id, eventCard.GuildId)">
+                    <div class="card-body pb-2 pt-2">
+                        <div class="d-flex align-items-center position-relative">
+                            <h2 class="fs-1 event-card-title mx-auto mb-2 text-center runescape-font ">
+                                @eventCard.EventName
+                            </h2>
+                        </div>
+                        <p class="card-text text-center runescape-font">hosted by @eventCard.GuildId.</p>
+                        <hr />
+                        <div class="d-flex flex-wrap  align-items-center event-card-icon">
+                            <div class="d-flex align-items-center">
+                                <i class="fa-solid fa-user-group"></i>
+                                <p class="m-0" style="font-size:0.9rem; font-weight:bold">  &nbsp; @eventCard.TotalPlayers</p>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="fa-solid fa-clock"></i>
+                                <p class="m-0" style="font-size:0.9rem; font-weight:bold">  &nbsp; @eventCard.CreatedDate.ToString("dd/MM/yyyy")</p>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <i class="fa-regular fa-clock"></i>
+                                <p class="m-0" style="font-size:0.9rem; font-weight:bold">  &nbsp;  @eventCard.EventEnd.ToString("dd/MM/yyyy")</p>
+                            </div>
+                            <div class="d-flex align-items-center mb-1">
+                                <div class="green-circle me-2"></div>
+                                <p class="m-0" style="font-size:0.9rem; font-weight:bold">
+                                    event active · @((eventCard.EventEnd - eventCard.EventStart).TotalDays.ToString("0")) Days left
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@code {
+    private EventHomeViewModel eventHomeViewModel = new EventHomeViewModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        eventHomeViewModel.Events = await EventHomeService.GetAllEvent();
+    }
+
+    private void NavigateToEvent(int eventId, ulong guildId)
+    {
+        NavManager.NavigateTo($"/event/{eventId}/{(long)guildId}");
+    }
+}
