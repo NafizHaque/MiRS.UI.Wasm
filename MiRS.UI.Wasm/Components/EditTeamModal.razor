@@ -84,11 +84,11 @@
     [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
     [Parameter] public IList<GuildTeam> Teams { get; set; } = new List<GuildTeam>();
     [Parameter] public GuildTeam TeamToBeEditted { get; set; } = new GuildTeam();
-    [Parameter] public EventCallback<TeamAdminViewModel> OnSave { get; set; }
+    [Parameter] public EventCallback<AddTeamViewModel> OnSave { get; set; }
 
     private GuildTeam Unassigned { get; set; } = new GuildTeam { Id = 0, TeamName = "Unassigned" };
 
-    private TeamAdminViewModel teamAdminViewModal = new TeamAdminViewModel();
+    private AddTeamViewModel teamAdminViewModal = new AddTeamViewModel();
     private int selectedEditModeTeamId;
 
     private CancellationTokenSource? userSearchCancelToken;

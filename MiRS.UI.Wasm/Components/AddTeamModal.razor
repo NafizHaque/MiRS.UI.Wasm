@@ -15,7 +15,6 @@
                     <div class="toggle-switch mb-2">
                         <input type="checkbox" id="toggle" @onchange="TeamTypeToggle" />
                         <label for="toggle"></label>
-
                     </div>
                     <label for="teamName" class="text-white mb-2" style="font-weight: bold; display: block;">
                         Team Name
@@ -23,7 +22,7 @@
                     @if (ViewModel.AddExistingTeamToggle == true)
                     {
                         <select class="modal-select" @onchange="ExistingTeamSelected">
-                            @foreach (var team in Teams)
+                            @foreach (var team in UnassignedGuildTeams)
                             {
                                 <option value="@team.Id">@team.TeamName</option>
                             }
@@ -76,7 +75,6 @@
                             <div class="border p-3" style="height:12rem">
                                 @if (ViewModel.SelectedEditModeTeamId == 0)
                                 {
-
                                     <Dropzone CopyItem="CopyPlayer" OnItemDrop="OnPlayerDropped" TItem="MiRS.UI.Wasm.Domain.Entities.UserToTeam" Items="ViewModel.NewTeamToBeCreated.UsersInTeam" Class="team-item-container-small" ItemWrapperClass="@(item => "team-item-small")">
                                         @context.User.Runescapename
                                     </Dropzone>
@@ -104,14 +102,19 @@
     [Parameter] public bool IsVisible { get; set; }
     [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
     [Parameter] public IList<GuildTeam> Teams { get; set; } = new List<GuildTeam>();
+    [Parameter] public IList<GuildTeam> UnassignedGuildTeams { get; set; } = new List<GuildTeam>();
     [Parameter] public EventCallback<AddTeamRequest> OnSave { get; set; }
 
+
     private AddTeamViewModel ViewModel = new AddTeamViewModel();
+
+
 
     private async Task CloseModal()
     {
         await Task.Delay(200, new CancellationTokenSource().Token);
         IsVisible = false;
+        ViewModel = new AddTeamViewModel();
         await IsVisibleChanged.InvokeAsync(false);
     }
 
@@ -131,8 +134,10 @@
         {
             AddExistingTeamToggle = ViewModel.AddExistingTeamToggle,
             NewTeamToBeCreated = ViewModel.NewTeamToBeCreated,
-            CurrentTeamsToBeUpdated = Teams
+            CurrentTeamsToBeUpdated = ViewModel.CurrentTeamsToBeUpdated
         });
+
+        ViewModel = new AddTeamViewModel();
 
         await CloseModal();
     }
@@ -146,7 +151,9 @@
 
     private void ExistingTeamSelected(ChangeEventArgs e)
     {
-        // teamAdminViewModal.NewTeamToBeCreated = Unassigned;
+        var test = UnassignedGuildTeams.Where(gt => gt.Id == int.Parse(e.Value?.ToString() ?? string.Empty)).FirstOrDefault();
+        ViewModel.NewTeamToBeCreated = test;
+
     }
 
 
@@ -166,7 +173,7 @@
         try 
         {
 
-            await Task.Delay(350, ViewModel.UserSearchCancelToken.Token);
+            await Task.Delay(300, ViewModel.UserSearchCancelToken.Token);
             ViewModel.UnassignedUsers.UsersInTeam = await AddTeamService.UserSearch(userSearchKey, ViewModel.UserSearchCancelToken.Token);
         }
         catch (TaskCanceledException)

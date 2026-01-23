@@ -1,4 +1,5 @@
 ﻿@inject EventService EventDashboardService
+@inject TeamService TeamService
 @page "/event/{EventId:int}/{GuildId:long}"
 
 
@@ -64,7 +65,7 @@
 
 </div>
 
-<AddTeamModal @bind-IsVisible="ViewModel.ShowModal" Teams="ViewModel.Teams" OnSave="SaveTeams">
+<AddTeamModal @bind-IsVisible="ViewModel.ShowModal" Teams="ViewModel.Teams" UnassignedGuildTeams="ViewModel.UnassignedGuildTeams" OnSave="SaveTeams">
   
 </AddTeamModal>
 
@@ -82,6 +83,10 @@
     private async Task LoadTeams()
     {
         ViewModel.Teams = await EventDashboardService.GetTeamsFromEvent(EventId);
+
+        IList<GuildTeam> allGuildTeams = await TeamService.GetAllGuildTeams(GuildId);
+        ViewModel.UnassignedGuildTeams = allGuildTeams.Where(agt => !ViewModel.Teams.Any(st => st.Id == agt.Id)).ToList();
+
         await EventDashboardService.GetEventById(EventId);
     }
 

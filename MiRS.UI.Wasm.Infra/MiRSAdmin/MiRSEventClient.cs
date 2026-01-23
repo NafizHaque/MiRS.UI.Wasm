@@ -3,7 +3,6 @@ using MiRS.UI.Wasm.Domain.Dtos;
 using MiRS.UI.Wasm.Domain.Entities;
 using MiRS.UI.Wasm.Gateway.MiRSAdmin;
 
-
 namespace MiRS.UI.Wasm.Infrastructure.MiRSAdmin
 {
     public class MiRSEventClient : IMiRSEventClient
