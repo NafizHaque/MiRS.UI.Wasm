@@ -20,9 +20,11 @@ namespace MiRS.UI.Wasm
             builder.Services.AddBlazorDragDrop();
 
             builder.Services.AddScoped<EventService>();
+            builder.Services.AddScoped<TeamService>();
             builder.Services.AddScoped<UsersService>();
             builder.Services.AddScoped<BrowserStorageService>();
             builder.Services.AddScoped<IMiRSEventClient, MiRSEventClient>();
+            builder.Services.AddScoped<IMiRSTeamClient, MiRSTeamClient>();
             builder.Services.AddScoped<IMiRSUserClient, MiRSUserClient>();
 
             await builder.Build().RunAsync();
