@@ -10,8 +10,6 @@ namespace MiRS.UI.Wasm.Models
 
         public GuildTeam NewTeamToBeCreated { get; set; } = new GuildTeam();
 
-        public IEnumerable<GuildTeam> CurrentTeamsToBeUpdated { get; set; } = Enumerable.Empty<GuildTeam>();
-
         public GuildTeam UnassignedUsers { get; set; } = new GuildTeam { Id = 0, TeamName = "Unassigned" };
 
         public int SelectedEditModeTeamId { get; set; }

@@ -99,8 +99,15 @@
 
 .light-brown-box {
     width: 85%;
-    height: 200px;
+    height: 150px;
     background-color: rgba(181, 101, 29, 0.2);
+    border: 2px dashed rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+}
+
+.team-navbar {
+    min-height: 70px;
+    background-color: rgba(56, 45, 29, 0.2);
     border: 2px dashed rgba(0, 0, 0, 0.3);
     border-radius: 5px;
 }

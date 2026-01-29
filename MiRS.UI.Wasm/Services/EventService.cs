@@ -36,15 +36,26 @@ namespace MiRS.UI.Wasm.Services
             await _storage.SetToSessionStorage(StorageKey, events, TimeSpan.FromMinutes(10));
         }
 
-        public async Task<bool> UpdateTeamsForEvent(AddTeamRequest addTeamRequest)
+        public async Task<bool> UpdateTeamsForEvent(UpdateCurrentTeamsRequest updateCurrentTeamsRequest)
         {
 
             await _mirsEventClient.UpdateGuildTeamsForEvent(new UpdateTeamList
             {
+                EventId = updateCurrentTeamsRequest.EventId,
+                CurrentTeamsToBeUpdated = updateCurrentTeamsRequest.CurrentTeamsToBeUpdated,
+            });
+
+            return true;
+        }
+
+        public async Task<bool> AddTeamsForEvent(AddTeamRequest addTeamRequest)
+        {
+
+            await _mirsEventClient.AddGuildTeamToEvent(new AddNewTeamToEventContainer
+            {
                 EventId = addTeamRequest.EventId,
                 AddExistingTeamToggle = addTeamRequest.AddExistingTeamToggle,
                 NewTeamToBeCreated = addTeamRequest.NewTeamToBeCreated,
-                CurrentTeamsToBeUpdated = addTeamRequest.CurrentTeamsToBeUpdated,
             });
 
             return true;
@@ -83,6 +94,11 @@ namespace MiRS.UI.Wasm.Services
         public async Task RemoveTeamFromEvent(int teamId, int eventId)
         {
             await _mirsEventClient.RemoveTeamFromEvent(teamId, eventId);
+        }
+
+        public async Task<bool> VerifyEventPassword(int eventId, ulong guildId, string eventpassword)
+        {
+            return await _mirsEventClient.VerifyEventPassword(eventId, guildId, eventpassword);
         }
 
     }

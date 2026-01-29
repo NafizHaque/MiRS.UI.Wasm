@@ -23,13 +23,36 @@
             </p>
         </div>
     </div>
-
-    <input @bind="ViewModel.TeamAdminUnlock" placeholder="Type Password here..." />
-    <button @onclick="ApplyText">Apply</button>
-
+    <h1 class="mb-5 mt-5 text-cemter">Teams</h1>
+    <div class="team-navbar p-2 texture-effect-cross d-flex align-items-center flex-wrap mb-3">
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+            <label class="mb-0">Event Pass:</label>
+            <EditForm Model="ViewModel" OnSubmit="VerifyEventPassword" class="m-0">
+                <div class="d-flex align-items-center gap-2">
+                    <input class="modal-textbox"
+                           @bind="ViewModel.TeamAdminUnlock"
+                           placeholder="Type Password here..."
+                           style="min-width:260px;" />
+                    <button type="submit" class="btn btn-success btn-sm">
+                        Unlock
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+        <div class="ms-auto mt-2 mt-md-0">
+            <button type="button" class="btn btn-success btn-sm" @onclick="UpdateUsersInTeams">
+                Save&nbsp;
+                <i class="fa-solid fa-floppy-disk"></i>
+            </button>
+        </div>
+    </div>
     <div class="content @(ViewModel.IsEnabled ? "" : "editteam-disabled-div")">
-        <h1 class="mb-5 mt-5 text-cemter">Teams</h1>
-
+        <div class="light-brown-box p-2 texture-effect-cross mx-auto d-flex align-items-center justify-content-center mb-3 flex-wrap">
+            <button type="button" class="btn btn-success btn-sm" @onclick="() => ViewModel.ShowModalAdd = true">
+                <i class="fa-solid fa-plus"></i>
+                <p>Add New Team</p>
+            </button>
+        </div>
         <div class="mt-5 mx-auto mb-5">
             @foreach (var team in ViewModel.Teams)
             {
@@ -40,7 +63,7 @@
                             @team.TeamName
                         </h2>
                         <div class="d-flex gap-2 flex-shrink-0 mt-2 mt-sm-0">
-                            <button type="button" class="btn btn-success btn-sm">
+                            <button type="button" class="btn btn-success btn-sm" @onclick="() => LoadEditModalData(team.Id)">
                                 <i class="fa-solid fa-plus"></i>
                             </button>
                             <button type="button" class="btn btn-danger btn-sm">
@@ -54,20 +77,14 @@
                 </div>
             }
         </div>
-
-        <div class="light-brown-box p-2 texture-effect-cross mx-auto d-flex align-items-center justify-content-center mb-3 flex-wrap">
-            <button type="button" class="btn btn-success btn-sm" @onclick="() => ViewModel.ShowModal = true">
-                <i class="fa-solid fa-plus"></i>
-                <p>Add New Team</p>
-            </button>
-        </div>
     </div>
-
 </div>
 
-<AddTeamModal @bind-IsVisible="ViewModel.ShowModal" Teams="ViewModel.Teams" UnassignedGuildTeams="ViewModel.UnassignedGuildTeams" OnSave="SaveTeams">
-  
+<AddTeamModal @bind-IsVisible="ViewModel.ShowModalAdd" Teams="ViewModel.Teams" UnassignedGuildTeams="ViewModel.UnassignedGuildTeams" OnSave="SaveAddedTeams">
 </AddTeamModal>
+
+<EditTeamModal @bind-IsVisible="ViewModel.ShowModalEdit" Teams="ViewModel.Teams" UnassignedGuildTeams="ViewModel.UnassignedGuildTeams" TeamToBeEditted="ViewModel.TeamToBeEditted" OnSave="SaveEdittedTeams">
+</EditTeamModal>
 
 @code {
     [Parameter] public int EventId { get; set; }
@@ -90,13 +107,47 @@
         await EventDashboardService.GetEventById(EventId);
     }
 
-    private async Task SaveTeams(AddTeamRequest addTeamRequest)
+    private async Task SaveAddedTeams(AddTeamRequest addTeamRequest)
     {
         addTeamRequest.NewTeamToBeCreated.GuildId = (ulong)GuildId;
 
         addTeamRequest.EventId = EventId;
 
-        await EventDashboardService.UpdateTeamsForEvent(addTeamRequest);
+        await EventDashboardService.UpdateTeamsForEvent(new UpdateCurrentTeamsRequest
+        {
+            EventId = addTeamRequest.EventId,
+            CurrentTeamsToBeUpdated = addTeamRequest.CurrentTeamsToBeUpdated,
+        });
+
+        await EventDashboardService.AddTeamsForEvent(addTeamRequest);
+
+        await LoadTeams();
+    }
+
+    private async Task SaveEdittedTeams(EditTeamRequest editTeamRequest)
+    {
+        editTeamRequest.EventId = EventId;
+
+        await EventDashboardService.UpdateTeamsForEvent(new UpdateCurrentTeamsRequest
+        {
+            EventId = editTeamRequest.EventId,
+            CurrentTeamsToBeUpdated = editTeamRequest.CurrentTeamsToBeUpdated,
+        });
+
+        await LoadTeams();
+    }
+
+
+
+    private async Task UpdateUsersInTeams()
+    {
+        UpdateCurrentTeamsRequest updateCurrentTeamsRequest = new UpdateCurrentTeamsRequest()
+        {
+            EventId = EventId,
+            CurrentTeamsToBeUpdated = ViewModel.Teams,
+        };
+
+        await EventDashboardService.UpdateTeamsForEvent(updateCurrentTeamsRequest);
 
         await LoadTeams();
     }
@@ -108,9 +159,15 @@
         await LoadTeams();
     }
 
-    private void ApplyText()
+    private async Task LoadEditModalData(int teamid)
     {
-        ViewModel.IsEnabled = !string.IsNullOrWhiteSpace(ViewModel.TeamAdminUnlock);
+        ViewModel.TeamToBeEditted = ViewModel.Teams.Where(t => t.Id == teamid).FirstOrDefault();
+        ViewModel.ShowModalEdit = true;
+    }
+
+    private async Task VerifyEventPassword()
+    {
+        ViewModel.IsEnabled = await EventDashboardService.VerifyEventPassword(EventId, (ulong)GuildId, ViewModel.TeamAdminUnlock ?? string.Empty);
     }
 
     private string EditTeamToggle()

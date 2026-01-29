@@ -1,8 +1,8 @@
 ﻿using MiRS.UI.Wasm.Domain.Entities;
 
-namespace MiRS.UI.Wasm.Domain.Dtos
+namespace MiRS.UI.Wasm.Models.Requests
 {
-    public class UpdateTeamList
+    public class UpdateCurrentTeamsRequest
     {
         public int EventId { get; set; }
 

@@ -21,28 +21,27 @@ namespace MiRS.UI.Wasm.Services
 
         public async ValueTask SetToLocalStorage<T>(string key, T value, TimeSpan? expiration = null)
         {
-            var cache = new TimedCache<T>
+            TimedCache<T> cache = new TimedCache<T>
             {
                 Value = value,
                 ExpiresAt = DateTime.UtcNow.Add(expiration ?? _defaultExpiration)
             };
 
-            var json = JsonSerializer.Serialize(cache);
+            string json = JsonSerializer.Serialize(cache);
             await _js.InvokeVoidAsync("localStorage.setItem", key, json);
 
         }
 
-
         public async ValueTask<T?> GetFromLocalStorage<T>(string key, string? defaultValue = null)
         {
 
-            var json = await _js.InvokeAsync<string>("localStorage.getItem", key);
+            string json = await _js.InvokeAsync<string>("localStorage.getItem", key);
 
             if (string.IsNullOrEmpty(json)) return default;
 
             try
             {
-                var cache = JsonSerializer.Deserialize<TimedCache<T>>(json);
+                TimedCache<T> cache = JsonSerializer.Deserialize<TimedCache<T>>(json);
                 if (cache == null || cache.ExpiresAt <= DateTime.UtcNow)
                 {
                     // Expired — remove it
@@ -64,26 +63,25 @@ namespace MiRS.UI.Wasm.Services
 
         public async ValueTask SetToSessionStorage<T>(string key, T value, TimeSpan? expiration = null)
         {
-            var cache = new TimedCache<T>
+            TimedCache<T> cache = new TimedCache<T>
             {
                 Value = value,
                 ExpiresAt = DateTime.UtcNow.Add(expiration ?? _defaultExpiration)
             };
 
-            var json = JsonSerializer.Serialize(cache);
+            string json = JsonSerializer.Serialize(cache);
             await _js.InvokeVoidAsync("sessionStorage.setItem", key, json);
         }
 
-
         public async ValueTask<T?> GetFromSessionStorage<T>(string key, string? defaultValue = null)
         {
-            var json = await _js.InvokeAsync<string>("sessionStorage.getItem", key);
+            string json = await _js.InvokeAsync<string>("sessionStorage.getItem", key);
 
             if (string.IsNullOrEmpty(json)) return default;
 
             try
             {
-                var cache = JsonSerializer.Deserialize<TimedCache<T>>(json);
+                TimedCache<T> cache = JsonSerializer.Deserialize<TimedCache<T>>(json);
                 if (cache == null || cache.ExpiresAt <= DateTime.UtcNow)
                 {
                     // Expired — remove it
@@ -98,7 +96,6 @@ namespace MiRS.UI.Wasm.Services
                 return default;
             }
         }
-
 
         public async ValueTask RemoveFromSessionStorage(string key) => await _js.InvokeVoidAsync("sessionStorage.removeItem", key);
 
