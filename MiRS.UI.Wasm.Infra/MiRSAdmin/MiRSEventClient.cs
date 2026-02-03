@@ -21,22 +21,20 @@ namespace MiRS.UI.Wasm.Infrastructure.MiRSAdmin
             return jsonResponse.GuildTeams;
         }
 
+        public async Task AddGuildTeamToEvent(AddNewTeamToEventContainer addNewTeamToEventContainer)
+        {
+            await "https://localhost:7176/v1/"
+                .WithHeader("Content-Type", "application/json")
+                .AppendPathSegment($"events/teamstoevent/")
+                .PostJsonAsync(addNewTeamToEventContainer);
+        }
+
         public async Task UpdateGuildTeamsForEvent(UpdateTeamList updateTeamList)
         {
             await "https://localhost:7176/v1/"
                 .WithHeader("Content-Type", "application/json")
                 .AppendPathSegment($"events/teamstoevent/")
                 .PatchJsonAsync(updateTeamList);
-        }
-
-        public async Task<IEnumerable<EventView>> GetAllEvents()
-        {
-            EventViewContainer jsonResponse = await "https://localhost:7176/v1/"
-                .WithHeader("Content-Type", "application/json")
-                .AppendPathSegment($"events/allevents/")
-                .GetJsonAsync<EventViewContainer>();
-
-            return jsonResponse.GuildEvents;
         }
 
         public async Task RemoveTeamFromEvent(int teamId, int eventId)
@@ -50,6 +48,32 @@ namespace MiRS.UI.Wasm.Infrastructure.MiRSAdmin
                     teamid = teamId
                 })
                 .DeleteAsync();
+        }
+
+        public async Task<IEnumerable<EventView>> GetAllEvents()
+        {
+            EventViewContainer jsonResponse = await "https://localhost:7176/v1/"
+                .WithHeader("Content-Type", "application/json")
+                .AppendPathSegment($"events/allevents/")
+                .GetJsonAsync<EventViewContainer>();
+
+            return jsonResponse.GuildEvents;
+        }
+
+        public async Task<bool> VerifyEventPassword(int eventId, ulong guildId, string eventPassword)
+        {
+            UpdateEventVerificationContainer jsonResponse = await "https://localhost:7176/v1/"
+                .WithHeader("Content-Type", "application/json")
+                .AppendPathSegment($"events/verify/")
+                .SetQueryParams(new
+                {
+                    eventid = eventId,
+                    guildid = guildId,
+                    eventpassword = eventPassword,
+                })
+                .GetJsonAsync<UpdateEventVerificationContainer>();
+
+            return jsonResponse.Verfied;
         }
     }
 }

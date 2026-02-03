@@ -8,7 +8,11 @@ namespace MiRS.UI.Wasm.Models
 
         public IList<GuildTeam> UnassignedGuildTeams { get; set; } = new List<GuildTeam>();
 
-        public bool ShowModal { get; set; }
+        public GuildTeam TeamToBeEditted { get; set; } = new GuildTeam();
+
+        public bool ShowModalAdd { get; set; }
+
+        public bool ShowModalEdit { get; set; }
 
         public bool IsEnabled { get; set; }
 

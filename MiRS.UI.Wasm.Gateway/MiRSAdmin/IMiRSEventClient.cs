@@ -9,9 +9,13 @@ namespace MiRS.UI.Wasm.Gateway.MiRSAdmin
 
         public Task UpdateGuildTeamsForEvent(UpdateTeamList updateTeamList);
 
+        public Task AddGuildTeamToEvent(AddNewTeamToEventContainer addNewTeamToEventContainer);
+
         public Task<IEnumerable<EventView>> GetAllEvents();
 
         public Task RemoveTeamFromEvent(int teamId, int eventId);
+
+        public Task<bool> VerifyEventPassword(int eventId, ulong guildId, string eventPassword);
 
     }
 }

@@ -12,22 +12,24 @@
                     <button type="button" class="btn-close" aria-label="Close" @onmousedown="CloseModal"></button>
                 </div>
                 <div class="modal-body">
+                    <div class="toggle-switch mb-2">
+                        <input type="checkbox" id="toggle" @onchange="TeamTypeToggle" />
+                        <label for="toggle"></label>
+                    </div>
                     <label for="teamName" class="text-white mb-2" style="font-weight: bold; display: block;">
                         Team Name
                     </label>
-
                     <input type="text" class="modal-textbox" @bind="TeamToBeEditted.TeamName" @bind:event="oninput" placeholder="Type team name here...." />
-
                     <div class="d-flex gap-3 w-100 mt-3">
                         <div class="team-column">
-                            <select class="modal-select mb-2" @bind="selectedEditModeTeamId">
-                                <option value="@Unassigned.Id">@Unassigned.TeamName</option>
+                            <select class="modal-select mb-2" @bind="ViewModel.SelectedEditModeTeamId">
+                                <option value="@ViewModel.UnassignedUsers.Id">@ViewModel.UnassignedUsers.TeamName</option>
                                 @foreach (var team in Teams)
                                 {
                                     <option value="@team.Id">@team.TeamName</option>
                                 }
                             </select>
-                            @if (selectedEditModeTeamId == 0)
+                            @if (ViewModel.SelectedEditModeTeamId == 0)
                             {
                                 <div class="border p-3 pt-1" style="height:12rem">
 
@@ -49,13 +51,11 @@
                         </div>
                         <div class="team-column">
                             <div class="modal-select mb-2">
-
-                                <div>@TeamToBeEditted.TeamName</div>
+                            <div>@TeamToBeEditted.TeamName</div>
                             </div>
                             <div class="border p-3" style="height:12rem">
-                                @if (selectedEditModeTeamId == 0)
+                                @if (ViewModel.SelectedEditModeTeamId == 0)
                                 {
-
                                     <Dropzone CopyItem="CopyPlayer" OnItemDrop="OnPlayerDropped" TItem="MiRS.UI.Wasm.Domain.Entities.UserToTeam" Items="TeamToBeEditted.UsersInTeam" Class="team-item-container-small" ItemWrapperClass="@(item => "team-item-small")">
                                         @context.User.Runescapename
                                     </Dropzone>
@@ -83,41 +83,52 @@
     [Parameter] public bool IsVisible { get; set; }
     [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
     [Parameter] public IList<GuildTeam> Teams { get; set; } = new List<GuildTeam>();
-    [Parameter] public GuildTeam TeamToBeEditted { get; set; } = new GuildTeam();
-    [Parameter] public EventCallback<AddTeamViewModel> OnSave { get; set; }
+    [Parameter] public GuildTeam TeamToBeEditted { get; set; }
+    [Parameter] public IList<GuildTeam> UnassignedGuildTeams { get; set; } = new List<GuildTeam>();
+    [Parameter] public EventCallback<EditTeamRequest> OnSave { get; set; }
 
-    private GuildTeam Unassigned { get; set; } = new GuildTeam { Id = 0, TeamName = "Unassigned" };
-
-    private AddTeamViewModel teamAdminViewModal = new AddTeamViewModel();
-    private int selectedEditModeTeamId;
-
-    private CancellationTokenSource? userSearchCancelToken;
+    private AddTeamViewModel ViewModel = new AddTeamViewModel();
 
     private async Task CloseModal()
     {
         await Task.Delay(200, new CancellationTokenSource().Token);
         IsVisible = false;
+        ViewModel = new AddTeamViewModel();
         await IsVisibleChanged.InvokeAsync(false);
     }
 
     private IList<UserToTeam> CurrentPlayers()
     {
-        if (selectedEditModeTeamId == 0)
+        if (ViewModel.SelectedEditModeTeamId == 0)
         {
-            return Unassigned.UsersInTeam.ToList() ?? new List<UserToTeam>();
+            return ViewModel.UnassignedUsers.UsersInTeam.ToList() ?? new List<UserToTeam>();
         }
 
-        return Teams?.FirstOrDefault(t => t.Id == selectedEditModeTeamId)?.UsersInTeam ?? new List<UserToTeam>();
+        return Teams?.FirstOrDefault(t => t.Id == ViewModel.SelectedEditModeTeamId)?.UsersInTeam ?? new List<UserToTeam>();
     }
 
     private async Task SaveTeamChanges()
     {
-        teamAdminViewModal.NewTeamToBeCreated = TeamToBeEditted;
-        teamAdminViewModal.CurrentTeamsToBeUpdated = Teams;
+        await OnSave.InvokeAsync(new EditTeamRequest
+        {
+            CurrentTeamsToBeUpdated = Teams
+        });
 
-        await OnSave.InvokeAsync(teamAdminViewModal);
+        ViewModel = new AddTeamViewModel();
 
         await CloseModal();
+    }
+
+    private void TeamTypeToggle()
+    {
+        ViewModel.AddExistingTeamToggle = ViewModel.AddExistingTeamToggle ? false : true;
+        ViewModel.NewTeamToBeCreated = new GuildTeam();
+    }
+
+    private void ExistingTeamSelected(ChangeEventArgs e)
+    {
+        ViewModel.NewTeamToBeCreated = UnassignedGuildTeams.Where(gt => gt.Id == int.Parse(e.Value?.ToString() ?? string.Empty)).FirstOrDefault();
+
     }
 
     private async Task UserSearch(ChangeEventArgs e)
@@ -126,22 +137,22 @@
 
         if (string.IsNullOrWhiteSpace(userSearchKey))
         {
-            Unassigned.UsersInTeam.Clear();
+            ViewModel.UnassignedUsers.UsersInTeam.Clear();
             return;
         }
 
-        userSearchCancelToken?.Cancel();
-        userSearchCancelToken = new CancellationTokenSource();
+        ViewModel.UserSearchCancelToken?.Cancel();
+        ViewModel.UserSearchCancelToken = new CancellationTokenSource();
 
         try
         {
 
-            await Task.Delay(350, userSearchCancelToken.Token);
-            Unassigned.UsersInTeam = await AddTeamService.UserSearch(userSearchKey, userSearchCancelToken.Token);
+            await Task.Delay(300, ViewModel.UserSearchCancelToken.Token);
+            ViewModel.UnassignedUsers.UsersInTeam = await AddTeamService.UserSearch(userSearchKey, ViewModel.UserSearchCancelToken.Token);
         }
         catch (TaskCanceledException)
         {
-            Unassigned.UsersInTeam.Clear();
+            ViewModel.UnassignedUsers.UsersInTeam.Clear();
             return;
         }
     }
@@ -159,7 +170,7 @@
 
     private void OnPlayerDropped(UserToTeam player)
     {
-        var duplicates = TeamToBeEditted.UsersInTeam
+        var duplicates = ViewModel.NewTeamToBeCreated.UsersInTeam
             .Where(p => p.User.Runescapename == player.User.Runescapename)
             .ToList();
 
@@ -167,7 +178,7 @@
         {
             for (int i = 0; i < duplicates.Count - 1; i++)
             {
-                TeamToBeEditted.UsersInTeam.Remove(duplicates[i]);
+                ViewModel.NewTeamToBeCreated.UsersInTeam.Remove(duplicates[i]);
             }
         }
     }
