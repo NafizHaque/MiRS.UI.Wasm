@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using MiRS.UI.Wasm.Gateway.MiRSAdmin;
-using MiRS.UI.Wasm.Infrastructure.MiRSAdmin;
-using MiRS.UI.Wasm.Services;
+using MiRS.UI.Wasm.Infrastructure;
 using Plk.Blazor.DragDrop;
 
 namespace MiRS.UI.Wasm
@@ -19,13 +17,8 @@ namespace MiRS.UI.Wasm
 
             builder.Services.AddBlazorDragDrop();
 
-            builder.Services.AddScoped<EventService>();
-            builder.Services.AddScoped<TeamService>();
-            builder.Services.AddScoped<UsersService>();
-            builder.Services.AddScoped<BrowserStorageService>();
-            builder.Services.AddScoped<IMiRSEventClient, MiRSEventClient>();
-            builder.Services.AddScoped<IMiRSTeamClient, MiRSTeamClient>();
-            builder.Services.AddScoped<IMiRSUserClient, MiRSUserClient>();
+            builder.Services.AddWebServices();
+            builder.Services.AddMiRSClients();
 
             await builder.Build().RunAsync();
         }
