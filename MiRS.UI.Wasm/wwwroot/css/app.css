@@ -455,12 +455,12 @@ body {
 }
 
 .modal-textbox {
-    width: 100%; /* full width of modal */
-    padding: 4px 6px; /* space inside input */
+    width: 100%; 
+    padding: 4px 6px;
     border: 1px solid #c6aa76;
     border-radius: 4px;
     background-color: #3d3223;
-    color: #c6aa76; /* white text */
+    color: #c6aa76;
     outline: none;
 }
 
@@ -548,3 +548,9 @@ input:checked + label {
     input:checked + label::before {
         transform: translateX(26px);
     }
+
+.category-add-box {
+    background-color: rgba(181, 101, 29, 0.2);
+    border: 2px dashed rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+}

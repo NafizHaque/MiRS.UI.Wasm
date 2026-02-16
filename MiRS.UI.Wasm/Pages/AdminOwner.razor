@@ -1,0 +1,168 @@
+﻿@inject AdminOwnerService AdminOwnerService
+@page "/Admin"
+
+<PageTitle>Admin</PageTitle>
+
+<h1 class="mb-5 mt-5 text-center">Hello, world!</h1>
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <EditForm Model="ViewModel" OnSubmit="SaveChanges" class="m-0">
+                <div class="team-navbar pe-2 texture-effect-cross d-flex align-items-center flex-wrap mb-3" >
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                    </div>
+                    <div class="ms-auto mt-2 mt-md-0">
+                        <button type="submit" class="btn btn-success btn-sm">
+                            Save&nbsp;
+                            <i class="fa-solid fa-floppy-disk"></i>
+                        </button>
+                    </div>
+                </div>
+                @foreach (var cat in ViewModel.Categories)
+                {
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <input type="text" class="modal-textbox mb-0 flex-fill me-2" @bind="cat.Name" placeholder="Type name...." />
+
+                        <button type="button" class="btn btn-sm btn-outline-secondary" @onclick="() => cat.IsCollapsed = !cat.IsCollapsed">
+                            @(cat.IsCollapsed ? "Expand" : "Collapse")
+                        </button>
+
+                        <button type="button" class="btn btn-sm ms-1">
+                            <i class="fa-solid fa-trash" @onclick="() => DeleteCategory(cat.Name)"></i>
+                        </button>
+                    </div>
+                    @if (!cat.IsCollapsed)
+                    {
+                        <div class="ms-3">
+                            @foreach (var level in cat.Levels.OrderBy(l => l.Levelnumber))
+                            {
+                                <div class="rounded p-3 mb-4" style="border: 3px solid #8B4513;">
+                                    <div class="d-flex align-items-center gap-2 mb-2" style="width:95%">
+                                        <label class="form-label mb-0 text-end" style="width:50px;">Lvl</label>
+                                        <input type="text" class="modal-textbox" style="width:55px; text-align:center;" min="0" max="99" @bind="level.Levelnumber" />
+
+                                        <label class="form-label mb-0 text-end" style="width:60px;">Unlock</label>
+                                        <input type="text" class="modal-textbox" style="width:100px;" @bind="level.Unlock" />
+
+                                        <label class="form-label mb-0 text-end" style="width:120px;">Description</label>
+                                        <input type="text" class="modal-textbox flex-fill" @bind="level.UnlockDescription" />
+                                        <button type="button" class="btn btn-sm ms-1">
+                                            <i class="fa-solid fa-trash" @onclick="() => DeleteLevel(cat.Name, level.Levelnumber)"></i>
+                                        </button>
+                                    </div>
+
+                                    <div class="ms-4" style="width:93%">
+                                        @foreach (var task in level.LevelTasks.OrderBy(l => l.Levelnumber))
+                                        {
+                                            <div class="d-flex align-items-center gap-2 mb-2 w-100">
+                                                <label class="form-label mb-0 text-end" style="width: 120px;">Task</label>
+                                                <input type="text" class="modal-textbox flex-fill" @bind="task.Name" />
+
+                                                <label class="form-label mb-0 text-end" style="width: 80px;">Goal</label>
+                                                <input type="text" class="modal-textbox flex-fill" @bind="task.Goal" />
+
+                                                <button type="button" class="btn btn-sm ms-1">
+                                                    <i class="fa-solid fa-trash" @onclick="() => DeleteTask(cat.Name, level.Levelnumber, task.Name)"></i>
+                                                </button>
+                                            </div>
+                                        }
+                                        <div class="category-add-box p-2 texture-effect-cross mx-auto d-flex align-items-center justify-content-center mb-3 flex-wrap" style="width:90%">
+                                            <button type="button" class=" d-flex gap-2 align-items-center justify-content-center btn btn-success btn-sm"
+                                                    @onclick="() => AddNewTask(cat.Id, level.Levelnumber)">
+                                                <i class="fa-solid fa-plus"></i>
+                                                <div>Add New Task</div>
+                                            </button>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            }
+                            <div class="category-add-box p-2 texture-effect-cross mx-auto d-flex align-items-center justify-content-center mb-3 flex-wrap" style="width:90%">
+                                <button type="button" class=" d-flex gap-2 align-items-center justify-content-center btn btn-success btn-sm"
+                                        @onclick="() => AddNewLevel(cat.Id)">
+                                    <i class="fa-solid fa-plus"></i>
+                                    <div>Add New Level</div>
+                                </button>
+                            </div>
+                        </div>
+                    }
+                }
+                <div class="category-add-box p-2 texture-effect-cross mx-auto d-flex align-items-center justify-content-center mb-3 flex-wrap">
+                    <button type="button" class=" d-flex gap-2 align-items-center justify-content-center btn btn-success btn-sm"
+                            @onclick="() => AddNewCategory()">
+                        <i class="fa-solid fa-plus"></i>
+                        <div>Add New Category</div>
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+
+@code {
+    private AdminOwnerViewModel ViewModel = new AdminOwnerViewModel();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await RefreshMetaData(true);
+    }
+
+    private async Task RefreshMetaData(bool forceUpdate = false)
+    {
+        ViewModel.Categories = await AdminOwnerService.GetGameMetadata(forceUpdate);
+    }
+
+    private async Task AddNewTask(int catId, int levelNum)
+    {
+        await AdminOwnerService.AddNewTask(catId, levelNum);
+
+        await RefreshMetaData();
+    }
+
+    private async Task AddNewLevel(int catId)
+    {
+        await AdminOwnerService.AddNewLevel(catId);
+
+        await RefreshMetaData();
+    }
+
+    private async Task AddNewCategory()
+    {
+        await AdminOwnerService.AddNewCategory();
+
+        await RefreshMetaData();
+    }
+
+    private async Task DeleteCategory(string catName)
+    {
+        await AdminOwnerService.DeleteCategory(catName);
+
+        await RefreshMetaData();
+    }
+
+    private async Task DeleteTask(string catName, int levelNum, string taskName)
+    {
+        await AdminOwnerService.DeleteTask(catName, levelNum, taskName);
+
+        await RefreshMetaData();
+    }
+
+    private async Task DeleteLevel(string catName, int levelNum)
+    {
+        await AdminOwnerService.DeleteLevel(catName, levelNum);
+
+        await RefreshMetaData();
+    }
+
+    private async Task SaveChanges()
+    {
+        await AdminOwnerService.SaveChanges(ViewModel);
+
+        ViewModel.Categories = await AdminOwnerService.RefreshGameMetadata();
+    }
+
+
+}
