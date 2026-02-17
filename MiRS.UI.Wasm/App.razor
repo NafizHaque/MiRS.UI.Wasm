@@ -18,28 +18,3 @@
         </NotFound>
     </Router>
 </CascadingAuthenticationState>
-
-@code {
-    [Inject] AuthenticationStateProvider AuthStateProvider { get; set; } = default!;
-
-    protected override void OnInitialized()
-    {
-        // Subscribe to authentication state changes
-        AuthStateProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
-    }
-
-    private async void OnAuthenticationStateChanged(Task<AuthenticationState> task)
-    {
-        var authState = await task;
-        if (authState.User.Identity?.IsAuthenticated ?? false)
-        {
-            StateHasChanged(); // forces re-render so AuthorizeView shows the authenticated user
-            GetUserProfile();   // optional: load user data
-        }
-    }
-
-    private void GetUserProfile()
-    {
-        Console.WriteLine("User authenticated! Fetch profile or perform post-login logic here.");
-    }
-}
