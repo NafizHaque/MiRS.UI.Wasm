@@ -26,6 +26,7 @@ namespace MiRS.UI.Wasm
 
                 // Add API scope
                 options.ProviderOptions.DefaultAccessTokenScopes.Add($"api://{azureApi["ClientId"]}/External.User.Access");
+
             });
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
