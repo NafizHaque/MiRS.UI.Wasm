@@ -1,0 +1,124 @@
+﻿.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    color: #333;
+}
+
+.login-center {
+    display: flex;
+    flex-direction: column; /* STACK elements vertically */
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem; /* spacing between title and button */
+}
+
+.btn-google-circle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+    .btn-google-circle:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+    }
+
+    .btn-google-circle svg {
+        width: 50px;
+        height: 50px;
+    }
+
+.loading-text {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #666;
+}
+
+.signed-in {
+    text-align: center;
+}
+
+.btn-signout {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border: none;
+    background-color: #4285F4;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+    .btn-signout:hover {
+        background-color: #3367D6;
+    }
+
+.info-icon {
+    color: #888;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+    .info-icon:hover {
+        color: #555; /* slightly darker on hover */
+    }
+/* Tooltip container */
+.info-tooltip-container {
+    position: relative; /* needed for absolute positioning of tooltip */
+    display: inline-block;
+}
+
+/* Tooltip text */
+.tooltip-text {
+    visibility: hidden; /* hidden by default */
+    width: max-content;
+    max-width: 200px;
+    background-color: rgba(0,0,0,0.8);
+    color: #fff;
+    text-align: center;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    position: absolute;
+    z-index: 10;
+    bottom: 125%; /* show above the icon */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none; /* let clicks go through */
+}
+
+    /* Arrow under tooltip */
+    .tooltip-text::after {
+        content: "";
+        position: absolute;
+        top: 100%; /* bottom of tooltip */
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 5px;
+        border-style: solid;
+        border-color: rgba(0,0,0,0.8) transparent transparent transparent;
+    }
+
+/* Show tooltip on hover */
+.info-tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}

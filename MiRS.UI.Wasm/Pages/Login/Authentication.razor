@@ -1,0 +1,15 @@
+﻿@page "/authentication/{action}"
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+<RemoteAuthenticatorView Action="@Action" OnLogInSucceeded="HandleLoginSuccess" />
+
+@code {
+    [Parameter] public string? Action { get; set; }
+
+    private void HandleLoginSuccess()
+    {
+        // At this point the token is fully stored in the AuthenticationStateProvider
+        // Safe to navigate to home
+        NavManager.NavigateTo("/", true); // force reload to ensure auth state
+    }
+}

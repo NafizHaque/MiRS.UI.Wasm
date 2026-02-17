@@ -1,16 +1,32 @@
 ﻿using Flurl.Http;
+using Microsoft.Extensions.Options;
+using MiRs.Domain.Configurations;
 using MiRS.UI.Wasm.Domain.Dtos;
 using MiRS.UI.Wasm.Domain.Entities;
 using MiRS.UI.Wasm.Gateway.MiRSAdmin;
+using MiRS.UI.Wasm.Gateway.Tokens;
 
 namespace MiRS.UI.Wasm.Infrastructure.MiRSAdmin
 {
     public class MiRSEventClient : IMiRSEventClient
     {
+        private readonly IAccessTokenService _tokenService;
+
+        private readonly AppSettings _appSettings;
+
+        public MiRSEventClient(IOptions<AppSettings> appSettings, IAccessTokenService tokenService)
+        {
+            _appSettings = appSettings.Value;
+            _tokenService = tokenService;
+        }
+
         public async Task<IEnumerable<GuildTeam>> GetGuildTeamsFromEvent(int eventId)
         {
-            GuildTeamContainer jsonResponse = await "https://localhost:7176/v1/"
+            string token = await _tokenService.GetAccessTokenAsync();
+
+            GuildTeamContainer jsonResponse = await _appSettings.BaseUrl
                 .WithHeader("Content-Type", "application/json")
+                .WithOAuthBearerToken(token)
                 .AppendPathSegment($"events/teamstoevent/")
                 .SetQueryParams(new
                 {
@@ -23,24 +39,33 @@ namespace MiRS.UI.Wasm.Infrastructure.MiRSAdmin
 
         public async Task AddGuildTeamToEvent(AddNewTeamToEventContainer addNewTeamToEventContainer)
         {
-            await "https://localhost:7176/v1/"
+            string token = await _tokenService.GetAccessTokenAsync();
+
+            await _appSettings.BaseUrl
                 .WithHeader("Content-Type", "application/json")
+                .WithOAuthBearerToken(token)
                 .AppendPathSegment($"events/teamstoevent/")
                 .PostJsonAsync(addNewTeamToEventContainer);
         }
 
         public async Task UpdateGuildTeamsForEvent(UpdateTeamList updateTeamList)
         {
-            await "https://localhost:7176/v1/"
+            string token = await _tokenService.GetAccessTokenAsync();
+
+            await _appSettings.BaseUrl
                 .WithHeader("Content-Type", "application/json")
+                .WithOAuthBearerToken(token)
                 .AppendPathSegment($"events/teamstoevent/")
                 .PatchJsonAsync(updateTeamList);
         }
 
         public async Task RemoveTeamFromEvent(int teamId, int eventId)
         {
-            await "https://localhost:7176/v1/"
+            string token = await _tokenService.GetAccessTokenAsync();
+
+            await _appSettings.BaseUrl
                 .WithHeader("Content-Type", "application/json")
+                .WithOAuthBearerToken(token)
                 .AppendPathSegment($"events/teamstoevent/")
                 .SetQueryParams(new
                 {
@@ -52,8 +77,11 @@ namespace MiRS.UI.Wasm.Infrastructure.MiRSAdmin
 
         public async Task<IEnumerable<EventView>> GetAllEvents()
         {
-            EventViewContainer jsonResponse = await "https://localhost:7176/v1/"
+            string token = await _tokenService.GetAccessTokenAsync();
+
+            EventViewContainer jsonResponse = await _appSettings.BaseUrl
                 .WithHeader("Content-Type", "application/json")
+                .WithOAuthBearerToken(token)
                 .AppendPathSegment($"events/allevents/")
                 .GetJsonAsync<EventViewContainer>();
 
@@ -62,7 +90,7 @@ namespace MiRS.UI.Wasm.Infrastructure.MiRSAdmin
 
         public async Task<bool> VerifyEventPassword(int eventId, ulong guildId, string eventPassword)
         {
-            UpdateEventVerificationContainer jsonResponse = await "https://localhost:7176/v1/"
+            UpdateEventVerificationContainer jsonResponse = await _appSettings.BaseUrl
                 .WithHeader("Content-Type", "application/json")
                 .AppendPathSegment($"events/verify/")
                 .SetQueryParams(new

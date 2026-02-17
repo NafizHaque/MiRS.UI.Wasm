@@ -1,9 +1,10 @@
 ﻿@inject EventService EventDashboardService
 @inject TeamService TeamService
 @page "/event/{EventId:int}/{GuildId:long}"
+@attribute [Authorize]
 
 
-<h1 class="mb-5 mt-5 text-center">Hello, world!</h1>
+<h1 class="mb-5 mt-5 text-center">Event Dashboard!</h1>
 
 <div class="container my-5">
     <div class="loot-container mx-auto">
