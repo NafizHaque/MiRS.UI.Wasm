@@ -28,10 +28,10 @@ jobs:
       - name: Replace placeholders in appsettings.json
         run: |
           cp MiRS.UI.Wasm/wwwroot/appsettings.template.json MiRS.UI.Wasm/wwwroot/appsettings.json
-          sed -i "s|__API_BASE_URL__|$API_BASE_URL|g" wwwroot/appsettings.json
-          sed -i "s|__AZURE_API_CLIENT_ID__|$AZURE_API_CLIENT_ID|g" wwwroot/appsettings.json
-          sed -i "s|__AZURE_AD_AUTHORITY__|$AZURE_AD_AUTHORITY|g" wwwroot/appsettings.json
-          sed -i "s|__AZURE_AD_CLIENT_ID__|$AZURE_AD_CLIENT_ID|g" wwwroot/appsettings.json
+          sed -i "s|__API_BASE_URL__|$API_BASE_URL|g" MiRS.UI.Wasm/wwwroot/appsettings.json
+          sed -i "s|__AZURE_API_CLIENT_ID__|$AZURE_API_CLIENT_ID|g" MiRS.UI.Wasm/wwwroot/appsettings.json
+          sed -i "s|__AZURE_AD_AUTHORITY__|$AZURE_AD_AUTHORITY|g" MiRS.UI.Wasm/wwwroot/appsettings.json
+          sed -i "s|__AZURE_AD_CLIENT_ID__|$AZURE_AD_CLIENT_ID|g" MiRS.UI.Wasm/wwwroot/appsettings.json
 
 
       - name: Build And Deploy
