@@ -1,4 +1,5 @@
-﻿using MiRS.UI.Wasm.Services;
+﻿using MiRS.UI.Wasm.Gateway.Tokens;
+using MiRS.UI.Wasm.Services;
 
 namespace MiRS.UI.Wasm
 {
@@ -11,6 +12,7 @@ namespace MiRS.UI.Wasm
             services.AddScoped<UsersService>();
             services.AddScoped<AdminOwnerService>();
             services.AddScoped<BrowserStorageService>();
+            services.AddScoped<IAccessTokenService, AccessTokenService>();
 
             return services;
         }

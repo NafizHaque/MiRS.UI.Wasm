@@ -1,0 +1,17 @@
+﻿@page "/authentication/login-callback"
+
+<RemoteAuthenticatorView Action="login" OnLogInSucceeded="HandleLoginSuccess"  />
+
+@code {
+    private void HandleLoginSuccess()
+    {
+        // Navigate to home once token is processed
+        NavManager.NavigateTo("/", true);
+    }
+
+    private void HandleLoginFailed(RemoteAuthenticationState state)
+    {
+        // Optional: show user-friendly message
+        NavManager.NavigateTo("/login", true);
+    }
+}
