@@ -90,8 +90,11 @@ namespace MiRS.UI.Wasm.Infrastructure.MiRSAdmin
 
         public async Task<bool> VerifyEventPassword(int eventId, ulong guildId, string eventPassword)
         {
+            string token = await _tokenService.GetAccessTokenAsync();
+
             UpdateEventVerificationContainer jsonResponse = await _appSettings.BaseUrl
                 .WithHeader("Content-Type", "application/json")
+                .WithOAuthBearerToken(token)
                 .AppendPathSegment($"events/verify/")
                 .SetQueryParams(new
                 {
