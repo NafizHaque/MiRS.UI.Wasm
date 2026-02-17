@@ -8,6 +8,11 @@ on:
     types: [opened, synchronize, reopened, closed]
     branches:
       - master
+env:
+  API_BASE_URL: ${{ secrets.API_BASE_URL }}
+  AZURE_API_CLIENT_ID: ${{ secrets.AZURE_API_CLIENT_ID }}
+  AZURE_AD_AUTHORITY: ${{ secrets.AZURE_AD_AUTHORITY }}
+  AZURE_AD_CLIENT_ID: ${{ secrets.AZURE_AD_CLIENT_ID }}
 
 jobs:
   build_and_deploy_job:
