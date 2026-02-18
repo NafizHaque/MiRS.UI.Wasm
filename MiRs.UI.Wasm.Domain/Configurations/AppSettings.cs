@@ -20,5 +20,10 @@
         /// </summary>
         public int RetryCount { get; set; }
 
+        /// <summary>
+        /// Gets or Sets the AdminOic.
+        /// </summary>
+        public string AdminOid { get; set; } = "697b1b0b-d2fa-4a0d-9f12-548912609bfd";
+
     }
 }

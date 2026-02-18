@@ -1,0 +1,37 @@
+﻿/* Spinner container */
+.loading-spinner {
+    width: 80px;
+    height: 80px;
+    margin: 4rem auto; /* center horizontally and vertically */
+    position: relative;
+}
+
+    /* The circular track */
+    .loading-spinner .circle-track {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 8px solid #29231b; /* dark base */
+        border-top: 8px solid #c6aa76; /* highlight */
+        animation: spin 1s linear infinite;
+    }
+
+/* Spin animation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Optional: loading text below the spinner */
+.loading-text {
+    text-align: center;
+    margin-top: 1rem;
+    font-weight: bold;
+    color: #c6aa76;
+    font-family: "RuneScape Bold 12", sans-serif;
+}

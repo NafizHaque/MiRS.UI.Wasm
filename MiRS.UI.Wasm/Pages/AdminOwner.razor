@@ -1,4 +1,6 @@
 ﻿@inject AdminOwnerService AdminOwnerService
+@inject AuthenticationStateProvider AuthProvider
+@inject IOptions<AppSettings> AppSettings
 @page "/Admin"
 @attribute [Authorize]
 
@@ -108,6 +110,16 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        var oid = user.FindFirst("oid")?.Value;
+
+        if (oid != AppSettings.Value.AdminOid)
+        {
+            NavManager.NavigateTo("/");
+        }
+
         await RefreshMetaData(true);
     }
 

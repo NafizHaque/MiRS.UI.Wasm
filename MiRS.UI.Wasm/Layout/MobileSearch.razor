@@ -1,0 +1,28 @@
+﻿<div class="mobile-search-container">
+    <button class="mobile-search-btn" @onclick="ToggleSearch">
+        <i class="fa fa-search"></i>
+    </button>
+    <div class="mobile-search-dropdown @(isOpen ? "open" : "")">
+        <input type="text" class="mobile-search-input texture-effect-cross" placeholder="Search..." @bind="searchQuery" />
+        <button class="mobile-search-submit" @onclick="HandleSearch">
+            <i class="fa fa-search"></i>
+        </button>
+    </div>
+</div>
+
+@code {
+    private bool isOpen = false;
+    private string searchQuery = string.Empty;
+
+    private void ToggleSearch()
+    {
+        isOpen = !isOpen;
+    }
+
+    private void HandleSearch()
+    {
+        // do something with searchQuery
+        Console.WriteLine(searchQuery);
+        isOpen = false;
+    }
+}
