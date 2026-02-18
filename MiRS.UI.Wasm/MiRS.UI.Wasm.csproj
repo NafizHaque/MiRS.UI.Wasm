@@ -24,4 +24,8 @@
     <ProjectReference Include="..\MiRS.UI.Wasm.Infra\MiRS.UI.Wasm.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\JS\" />
+  </ItemGroup>
+
 </Project>
