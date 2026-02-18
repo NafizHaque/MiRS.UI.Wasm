@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - master
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - master
 env:
   API_BASE_URL: ${{ secrets.API_BASE_URL }}
   AZURE_API_CLIENT_ID: ${{ secrets.AZURE_API_CLIENT_ID }}
