@@ -75,6 +75,10 @@
                         <div class="row mb-2 align-items-center">
                             <label class="col-4 col-form-label text-white runescape-font fw-bold">
                                 Event Start
+                                <span class="info-tooltip-container">
+                                    <i class="fas fa-info-circle info-icon"></i>
+                                    <span class="tooltip-text">Date & Time is in UTC (Check OSRS ingame time)</span>
+                                </span>
                             </label>
                             <div class="col-8 d-flex gap-2">
                                 <InputDate class="modal-datepicker flex-grow-1"
@@ -85,13 +89,13 @@
                                         @bind="ViewModel.EventStartHour">
                                     @for (int i = 1; i < 13; i++)
                                     {
-                                        <option value="@i">@i</option>
+                                        <option value="@i.ToString()">@i</option>
                                     }
                                 </select>
                                 <div style="color: #c6aa76; font-size:large" bold>:</div>
                                 <select class="modal-select w-auto px-4"
                                         @bind="ViewModel.EventStartMinutes">
-                                    <option value="0">0</option>
+                                    <option value="00">00</option>
                                     <option value="30">30</option>
                                 </select>
                                 <select class="modal-select w-auto px-4"
@@ -104,6 +108,10 @@
                         <div class="row mb-2 align-items-center">
                             <label class="col-4 col-form-label text-white runescape-font fw-bold">
                                 Event End
+                                <span class="info-tooltip-container">
+                                    <i class="fas fa-info-circle info-icon"></i>
+                                    <span class="tooltip-text">Date & Time is in UTC (Check OSRS ingame time)</span>
+                                </span>
                             </label>
                             <div class="col-8 d-flex gap-2">
                                 <InputDate class="modal-datepicker flex-grow-1"
@@ -120,7 +128,7 @@
                                 <div style="color: #c6aa76; font-size:large" bold>:</div>                       
                                 <select class="modal-select w-auto px-4"
                                         @bind="ViewModel.EventEndMinute">
-                                    <option value="0">00</option>
+                                    <option value="00">00</option>
                                     <option value="30">30</option>
                                 </select>
                                 <select class="modal-select w-auto px-4"
@@ -145,7 +153,7 @@
 @code {
     [Parameter] public bool IsVisible { get; set; }
     [Parameter] public EventCallback<bool> IsVisibleChanged { get; set; }
-    [Parameter] public EventCallback<AddTeamRequest> OnSave { get; set; }
+    [Parameter] public EventCallback<AddEventRequest> OnSave { get; set; }
 
     private AddNewEventViewModal ViewModel = new AddNewEventViewModal();
 
@@ -159,8 +167,21 @@
 
     private async Task SaveEventForm()
     {
-        await OnSave.InvokeAsync(
-        );
+        TimeOnly eventStartTime = TimeOnly.ParseExact($"{ViewModel.EventStartHour}:{ViewModel.EventStartMinutes} {ViewModel.EventStartAmPm}", "h:mm tt", CultureInfo.InvariantCulture);
+
+        TimeOnly eventEndTime = TimeOnly.ParseExact($"{ViewModel.EventEndHour}:{ViewModel.EventEndMinute} {ViewModel.EventEndAmPm}", "h:mm tt", CultureInfo.InvariantCulture);
+
+        AddEventRequest newEventRequest = new AddEventRequest
+        {
+            GuildId = ViewModel.GuildId,
+            Eventname = ViewModel.Eventname,
+            ParticipantPassword = ViewModel.ParticipantPassword,
+            EventPassword = ViewModel.EventPassword,
+            EventStart = new DateTimeOffset(ViewModel.EventStart, eventStartTime, TimeSpan.Zero),
+            EventEnd = new DateTimeOffset(ViewModel.EventEnd, eventEndTime, TimeSpan.Zero)
+        };
+
+        await OnSave.InvokeAsync(newEventRequest);
 
         ViewModel = new AddNewEventViewModal();
 

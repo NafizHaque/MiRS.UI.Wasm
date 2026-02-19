@@ -11,6 +11,8 @@ namespace MiRS.UI.Wasm.Services
 
         private readonly IMiRSEventClient _mirsEventClient;
         private Task? _loadEvents;
+        private readonly object _lock = new();
+
         private readonly BrowserStorageService _storage;
         private const string StorageKey = "eventsCache";
 
@@ -22,11 +24,22 @@ namespace MiRS.UI.Wasm.Services
 
         public Task LoadEvents()
         {
-            if (_loadEvents is null)
+            lock (_lock)
             {
-                _loadEvents = LoadEventsInternal();
+                if (_loadEvents == null)
+                {
+                    _loadEvents = LoadEventsInternal();
+                    _loadEvents.ContinueWith(t =>
+                    {
+                        lock (_lock)
+                        {
+                            _loadEvents = null;
+                        }
+                    });
+                }
+
+                return _loadEvents;
             }
-            return _loadEvents;
         }
 
         public async Task LoadEventsInternal()
@@ -34,6 +47,19 @@ namespace MiRS.UI.Wasm.Services
             IEnumerable<EventView> events = (await _mirsEventClient.GetAllEvents()).ToList();
 
             await _storage.SetToSessionStorage(StorageKey, events, TimeSpan.FromMinutes(10));
+        }
+
+        public async Task CreateNewGuildEvent(AddEventRequest addEventRequest)
+        {
+            await _mirsEventClient.CreateNewGuildEvent(new AddNewEventContainer
+            {
+                GuildId = addEventRequest.GuildId,
+                Eventname = addEventRequest.Eventname,
+                ParticipantPassword = addEventRequest.ParticipantPassword,
+                EventPassword = addEventRequest.EventPassword,
+                EventStart = addEventRequest.EventStart,
+                EventEnd = addEventRequest.EventEnd,
+            });
         }
 
         public async Task<bool> UpdateTeamsForEvent(UpdateCurrentTeamsRequest updateCurrentTeamsRequest)
@@ -67,9 +93,9 @@ namespace MiRS.UI.Wasm.Services
 
         }
 
-        public async Task<IEnumerable<EventView>> GetAllEvent()
+        public async Task<IEnumerable<EventView>> GetAllEvent(bool force = false)
         {
-            if (await _storage.GetFromSessionStorage<IEnumerable<EventView>>(StorageKey) is null)
+            if (await _storage.GetFromSessionStorage<IEnumerable<EventView>>(StorageKey) is null || force)
             {
                 await LoadEvents();
             }

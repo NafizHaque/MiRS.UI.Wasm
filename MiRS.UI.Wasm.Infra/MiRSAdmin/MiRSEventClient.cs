@@ -20,6 +20,18 @@ namespace MiRS.UI.Wasm.Infrastructure.MiRSAdmin
             _tokenService = tokenService;
         }
 
+        public async Task CreateNewGuildEvent(AddNewEventContainer addNewEventContainer)
+        {
+            string token = await _tokenService.GetAccessTokenAsync();
+
+            await _appSettings.BaseUrl
+                .WithHeader("Content-Type", "application/json")
+                .WithOAuthBearerToken(token)
+                .AppendPathSegment($"events/")
+                .PostJsonAsync(addNewEventContainer);
+
+        }
+
         public async Task<IEnumerable<GuildTeam>> GetGuildTeamsFromEvent(int eventId)
         {
             string token = await _tokenService.GetAccessTokenAsync();

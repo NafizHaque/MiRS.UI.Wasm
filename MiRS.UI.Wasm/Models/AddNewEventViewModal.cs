@@ -19,10 +19,10 @@ namespace MiRS.UI.Wasm.Models
         public DateOnly EventStart { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(1);
 
         [Required(ErrorMessage = "Event Time is required")]
-        public int EventStartHour { get; set; } = 12;
+        public string EventStartHour { get; set; } = "12";
 
         [Required(ErrorMessage = "Event Time is required")]
-        public int EventStartMinutes { get; set; }
+        public string EventStartMinutes { get; set; } = "00";
 
         [Required(ErrorMessage = "Event Time is required")]
         public string EventStartAmPm { get; set; } = "am";
@@ -31,10 +31,10 @@ namespace MiRS.UI.Wasm.Models
         public DateOnly EventEnd { get; set; } = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(2);
 
         [Required(ErrorMessage = "Event Time is required")]
-        public int EventEndHour { get; set; } = 12;
+        public string EventEndHour { get; set; } = "12";
 
         [Required(ErrorMessage = "Event Time is required")]
-        public int EventEndMinute { get; set; }
+        public string EventEndMinute { get; set; } = "00";
 
         [Required(ErrorMessage = "Event Time is required")]
 
