@@ -1,4 +1,4 @@
-﻿@inject EventService EventHomeService
+﻿    @inject EventService EventHomeService
 @inject IJSRuntime JS
 @page "/"
 
@@ -11,7 +11,7 @@
 <div class="container my-5"> 
     <div class="row justify-content-center">
         <div class="col-12">    
-            @if (eventHomeViewModel.Events == null || !eventHomeViewModel.Events.Any())
+            @if (ViewModel.Events == null || !ViewModel.Events.Any())
             {
                 <div class="loading-spinner">
                     <div class="circle-track"></div>
@@ -20,7 +20,14 @@
             }
             else
             {
-                @foreach (var eventCard in eventHomeViewModel.Events)
+                <div class="ms-auto mt-2 mb-3">
+                    <button type="submit" class="btn btn-success btn-sm" @onclick="ShowEventCreateModal">
+                        <i class="fa-solid fa-circle-plus me-1"></i>
+                        Create New Event
+                      
+                    </button>
+                </div>
+                @foreach (var eventCard in ViewModel.Events)
                 {
                     <div class="event-card texture-effect-cross card mb-3" @onclick="() => NavigateToEvent(eventCard.Id, eventCard.GuildId)">
                         <div class="card-body pb-2 pt-2">
@@ -55,21 +62,36 @@
                     </div>
                 }
             }
-           
         </div>
     </div>
 </div>
 
+<AddNewEventModal @bind-IsVisible="ViewModel.ShowEventCreateModal" OnSave="Save"></AddNewEventModal>
+
 @code {
-    private EventHomeViewModel eventHomeViewModel = new EventHomeViewModel();
+    private EventHomeViewModel ViewModel = new EventHomeViewModel();
 
     protected override async Task OnInitializedAsync()
     {
-        eventHomeViewModel.Events = await EventHomeService.GetAllEvent();
+
+        ViewModel.Events = await EventHomeService.GetAllEvent();
+
+
+        StateHasChanged();
+        
     }
 
     private void NavigateToEvent(int eventId, ulong guildId)
     {
         NavManager.NavigateTo($"/event/{eventId}/{(long)guildId}");
+    }
+
+    private async Task Save(AddTeamRequest add)
+    {
+    }
+
+    private async Task ShowEventCreateModal()
+    {
+        ViewModel.ShowEventCreateModal = true;
     }
 }
